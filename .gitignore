@@ -4,6 +4,10 @@
 !package.json
 !tsconfig.json
 
+# ── Dev/Test Scripts ──
+app.py
+mcp_client.py
+
 # ── Python ──
 __pycache__/
 *.py[cod]

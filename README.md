@@ -1,12 +1,8 @@
-# Financial Portfolio Analyzer
+# Portfolio Pilot
 
 An AI-powered multi-agent system that analyzes your real stock portfolio, fetches live news, runs technical analysis with actual market indicators, and generates actionable risk mitigation recommendations — all streamed to a real-time web dashboard.
 
 Built with **LangGraph** + **Gemini 2.5 Pro** + **MCP (Model Context Protocol)** for connecting to a live Indian stock broker (Groww).
-
-https://github.com/user-attachments/assets/your-demo-video-id
-
-> *Replace the link above with your 30-second demo video after uploading it to the GitHub repo.*
 
 ---
 
@@ -27,52 +23,64 @@ https://github.com/user-attachments/assets/your-demo-video-id
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          FastAPI Server (SSE Streaming)                      │
-│                                                                             │
-│  GET /analyze ──────────────────────┐    POST /continue ──────────────────┐ │
-│  (Phase 1: EventSource)            │    (Phase 2: fetch + ReadableStream) │ │
-│                                     │                                      │ │
-│  ┌──────────┐    ┌──────────┐      │    ┌──────────────┐   ┌───────────┐ │ │
-│  │ Portfolio │───▶│   News   │──────┼───▶│   Analysis   │──▶│ Mitigation│ │ │
-│  │  Agent    │    │  Agent   │      │    │    Agent     │   │   Agent   │ │ │
-│  └────┬─────┘    └────┬─────┘      │    └──────┬───────┘   └─────┬─────┘ │ │
-│       │               │      ┌─────┘           │                 │       │ │
-│       │               │      │ INTERRUPT        │                 │       │ │
-│       │               │      │ (Human Review)   │                 │       │ │
-│       │               │      └─────────────────▶│                 │       │ │
-│       ▼               ▼                         ▼                 ▼       │ │
-│  ┌─────────────────────────────────────────────────────────────────────┐  │ │
-│  │                     LangGraph StateGraph                           │  │ │
-│  │                                                                     │  │ │
-│  │  AgentState: { portfolio, news, analysis, recommendations,         │  │ │
-│  │               messages, is_relevant }                               │  │ │
-│  │                                                                     │  │ │
-│  │  Checkpointer: MemorySaver (persists state across SSE phases)      │  │ │
-│  └─────────────────────────────────────────────────────────────────────┘  │ │
-└──────────┬──────────────┬─────────────────────────┬──────────────────────┘ │
-           │              │                         │                        │
-     ┌─────▼─────┐  ┌────▼─────┐          ┌───────▼────────┐               │
-     │ Groww MCP  │  │ News API │          │  Groww MCP     │               │
-     │ Server     │  │          │          │  Server        │               │
-     │            │  │ search   │          │                │               │
-     │ • holdings │  │ articles │          │ • RSI          │               │
-     │ • LTP      │  │ • query  │          │ • MACD         │               │
-     │ • search   │  │ • filter │          │ • Bollinger    │               │
-     └────────────┘  └──────────┘          │ • Candlestick  │               │
-                                           │ • Historical   │               │
-                                           └────────────────┘               │
-                                                                            │
-┌───────────────────────────────────────────────────────────────────────────┘
-│                     Frontend (HTML/CSS/JS)
-│
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────────┐
-│  │Portfolio │─▶│  News &  │─▶│  Human   │─▶│Technical │─▶│   Recom-    │
-│  │ Table    │  │Sentiment │  │  Review  │  │ Analysis │  │  mendations │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └─────────────┘
-│       ●──────────────●──────────────●──────────────●──────────────●
-│              Progress Bar (real-time step tracking)
-└──────────────────────────────────────────────────────────────────────────
+                              ┌──────────────────────────────┐
+                              │    FastAPI Server (SSE)       │
+                              │    http://localhost:8000      │
+                              └──────────────┬───────────────┘
+                                             │
+                     ┌───────────────────────┼───────────────────────┐
+                     │              LangGraph StateGraph              │
+                     │                                               │
+                     │  AgentState: { portfolio, news, analysis,     │
+                     │    recommendations, messages, is_relevant }   │
+                     │                                               │
+                     │  Checkpointer: MemorySaver                    │
+                     └───────────────────────┬───────────────────────┘
+                                             │
+          ┌──────────────────────────────────┼──────────────────────────────────┐
+          │                                  │                                  │
+          ▼                                  ▼                                  ▼
+ ── Phase 1 (GET /analyze) ──    ── Human Review ──    ── Phase 2 (POST /continue) ──
+          │                       (interrupt_before)                │
+          │                              │                          │
+    ┌─────┴─────┐                        │                  ┌──────┴───────┐
+    │           │                        │                  │              │
+    ▼           ▼                        ▼                  ▼              ▼
+┌────────┐ ┌────────┐            ┌─────────────┐    ┌──────────┐  ┌───────────┐
+│Portfolio│ │  News  │            │   Frontend  │    │ Analysis │  │Mitigation │
+│ Agent  │ │ Agent  │            │  Yes / No   │    │  Agent   │  │  Agent    │
+│(ReAct) │ │(ReAct) │            │   Button    │    │ (ReAct)  │  │(Direct)   │
+└───┬────┘ └───┬────┘            └─────────────┘    └────┬─────┘  └─────┬─────┘
+    │          │                                         │              │
+    ▼          ▼                                         ▼              ▼
+┌────────┐ ┌────────┐                              ┌──────────┐  ┌───────────┐
+│Groww   │ │NewsAPI │                              │Groww MCP │  │Structured │
+│MCP     │ │        │                              │Server    │  │LLM Output │
+│Server  │ │search  │                              │          │  │           │
+│        │ │articles│                              │• RSI     │  │• Rebalance│
+│• hold- │ │• query │                              │• MACD    │  │• Hedging  │
+│  ings  │ │• filter│                              │• Bollin- │  │• Exits    │
+│• LTP   │ │        │                              │  ger     │  │• Summary  │
+│• search│ │        │                              │• Candle- │  │           │
+│        │ │        │                              │  stick   │  │           │
+└────────┘ └────────┘                              └──────────┘  └───────────┘
+
+    │          │                                         │              │
+    ▼          ▼                                         ▼              ▼
+  SSE:      SSE:                                      SSE:           SSE:
+ portfolio   news                                   analysis    recommendations
+
+
+                         ┌──────────────────────────────┐
+                         │     Frontend (HTML/CSS/JS)    │
+                         │                               │
+                         │  ●────●────●────●────●        │
+                         │  Portfolio  Review  Recom-    │
+                         │    News   Analysis  mendations│
+                         │                               │
+                         │  Real-time progress bar       │
+                         │  Dark theme dashboard         │
+                         └──────────────────────────────┘
 ```
 
 ### Agent Details
@@ -108,7 +116,7 @@ Three of the four agents use the **ReAct pattern** — an LLM loop that reasons 
 The graph uses `interrupt_before=["analysis"]` to pause execution after the news agent. The frontend shows portfolio + news data, then waits for the user to decide if news is relevant. The backend resumes via `aupdate_state()` + `astream(None)`.
 
 ### MCP (Model Context Protocol)
-Instead of REST APIs, the broker data comes via **MCP** — a protocol that exposes tools (functions) from external servers. The Groww MCP server provides portfolio holdings, live prices, and technical analysis indicators as callable tools that LangGraph agents can use directly.
+Instead of REST APIs, the broker data comes via **MCP** — a protocol that exposes tools (functions) from external servers. The [Groww MCP Server](https://github.com/arkapravasinha/groww-mcp-server) provides portfolio holdings, live prices, and technical analysis indicators as callable tools that LangGraph agents can use directly.
 
 ### SSE Streaming (Two-Phase)
 - **Phase 1** (`GET /analyze`): Uses browser-native `EventSource` to stream portfolio and news events
@@ -128,7 +136,7 @@ The portfolio and analysis agents extract **raw tool outputs** from the ReAct me
 |-------|-----------|
 | **LLM** | Google Gemini 2.5 Pro (via `langchain-google-genai`) |
 | **Agent Framework** | LangGraph + LangChain |
-| **Broker Data** | [Groww MCP Server](https://github.com/anurag-groww/groww-mcp-server) (Model Context Protocol) |
+| **Broker Data** | [Groww MCP Server](https://github.com/arkapravasinha/groww-mcp-server) (Model Context Protocol) |
 | **News Data** | [NewsAPI](https://newsapi.org/) |
 | **Backend** | FastAPI with SSE streaming |
 | **Frontend** | Vanilla HTML/CSS/JS (dark theme) |
@@ -190,7 +198,7 @@ Edit `.env` and fill in your keys:
 
 ### 5. Start the Groww MCP Server
 
-Follow the setup instructions at [groww-mcp-server](https://github.com/anurag-groww/groww-mcp-server):
+Follow the setup instructions at [groww-mcp-server](https://github.com/arkapravasinha/groww-mcp-server):
 
 ```bash
 # In a separate terminal
@@ -212,9 +220,8 @@ Open [http://localhost:8000](http://localhost:8000) in your browser.
 ## Project Structure
 
 ```
-financial-agent/
+portfolio-pilot/
 ├── server.py                  # FastAPI server — SSE endpoints, graph compilation
-├── app.py                     # CLI version (standalone, for testing)
 │
 ├── agents/
 │   ├── portfolio_agent.py     # ReAct agent — fetches holdings via MCP
@@ -314,15 +321,6 @@ from langchain_anthropic import ChatAnthropic
 def get_llm(temperature=0):
     return ChatAnthropic(model="claude-sonnet-4-20250514", temperature=temperature)
 ```
-
----
-
-## Known Limitations
-
-- **NewsAPI free tier** returns articles up to 1 month old, and `get_top_headlines` often returns empty for financial queries. Currently using `get_everything` sorted by date.
-- **Groww JWT tokens expire** — you'll need to re-extract the token periodically from the Groww web app.
-- **Gemini occasional hallucination** — despite the anti-hallucination pattern, Gemini 2.5 Pro may rarely fabricate data. The tool-output extraction pattern mitigates but doesn't fully eliminate this.
-- **In-memory checkpointer** — `MemorySaver` loses state on server restart. For production, use a persistent checkpointer (Redis, PostgreSQL).
 
 ---
 
