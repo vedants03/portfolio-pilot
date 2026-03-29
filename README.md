@@ -29,12 +29,12 @@ Built with **LangGraph** + **Gemini 2.5 Pro** + **MCP (Model Context Protocol)**
 
 ```
                               ┌──────────────────────────────┐
-                              │    FastAPI Server (SSE)       │
-                              │    http://localhost:8000      │
+                              │    FastAPI Server (SSE)      │
+                              │    http://localhost:8000     │
                               └──────────────┬───────────────┘
                                              │
                      ┌───────────────────────┼───────────────────────┐
-                     │              LangGraph StateGraph              │
+                     │              LangGraph StateGraph             │
                      │                                               │
                      │  AgentState: { portfolio, news, analysis,     │
                      │    recommendations, messages, is_relevant }   │
@@ -52,7 +52,7 @@ Built with **LangGraph** + **Gemini 2.5 Pro** + **MCP (Model Context Protocol)**
     │           │                        │                  │              │
     ▼           ▼                        ▼                  ▼              ▼
 ┌────────┐ ┌────────┐            ┌─────────────┐    ┌──────────┐  ┌───────────┐
-│Portfolio│ │  News  │            │   Frontend  │    │ Analysis │  │Mitigation │
+Portfolio│ │  News  │            │   Frontend  │    │ Analysis │  │Mitigation │
 │ Agent  │ │ Agent  │            │  Yes / No   │    │  Agent   │  │  Agent    │
 │(ReAct) │ │(ReAct) │            │   Button    │    │ (ReAct)  │  │(Direct)   │
 └───┬────┘ └───┬────┘            └─────────────┘    └────┬─────┘  └─────┬─────┘
@@ -77,14 +77,14 @@ Built with **LangGraph** + **Gemini 2.5 Pro** + **MCP (Model Context Protocol)**
 
 
                          ┌──────────────────────────────┐
-                         │     Frontend (HTML/CSS/JS)    │
-                         │                               │
-                         │  ●────●────●────●────●        │
-                         │  Portfolio  Review  Recom-    │
-                         │    News   Analysis  mendations│
-                         │                               │
-                         │  Real-time progress bar       │
-                         │  Dark theme dashboard         │
+                         │     Frontend (HTML/CSS/JS)   │
+                         │                              │
+                         │  ●────●────●────●────●       │
+                         │  Portfolio  Review  Recom-   │
+                         │    News   Analysis  mendation│
+                         │                              │
+                         │  Real-time progress bar      │
+                         │  Dark theme dashboard        │
                          └──────────────────────────────┘
 ```
 
