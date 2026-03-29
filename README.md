@@ -151,8 +151,8 @@ The portfolio and analysis agents extract **raw tool outputs** from the ReAct me
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/vedants03/financial-agent.git
-cd financial-agent
+git clone https://github.com/vedants03/portfolio-pilot.git
+cd portfolio-pilot
 ```
 
 ### 2. Create a virtual environment
