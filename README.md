@@ -8,15 +8,20 @@ Built with **LangGraph** + **Gemini 2.5 Pro** + **MCP (Model Context Protocol)**
 
 ## Screenshots
 
-<div align="center">
+### Portfolio Holdings
+![Portfolio Holdings](assets/1-portfolio.png)
 
-| Portfolio & News | Technical Analysis | Recommendations |
-|:---:|:---:|:---:|
-| ![Portfolio](assets/screenshot-portfolio.png) | ![Analysis](assets/screenshot-analysis.png) | ![Recommendations](assets/screenshot-recommendations.png) |
+### News & Sentiment
+![News & Sentiment](assets/2-news.png)
 
-</div>
+### Technical Analysis
+![Technical Analysis](assets/3-analysis.png)
 
-> *Add your screenshots to the `assets/` folder. Name them `screenshot-portfolio.png`, `screenshot-analysis.png`, `screenshot-recommendations.png`.*
+### Recommendations
+![Recommendations](assets/4-recommendations.png)
+
+### Summary
+![Summary](assets/5-summary.png)
 
 ---
 
