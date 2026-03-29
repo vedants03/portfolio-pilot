@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Agent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Financial Portfolio Analyzer</h1>
+            <p class="subtitle">AI-powered portfolio risk analysis with real-time technical indicators</p>
+        </header>
+
+        <!-- Start Button -->
+        <div id="start-section" class="section">
+            <button id="start-btn" onclick="startAnalysis()">Analyze My Portfolio</button>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div id="progress" class="progress-bar hidden">
+            <div class="step" id="step-portfolio">
+                <div class="step-dot"></div>
+                <span>Portfolio</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step-news">
+                <div class="step-dot"></div>
+                <span>News</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step-review">
+                <div class="step-dot"></div>
+                <span>Review</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step-analysis">
+                <div class="step-dot"></div>
+                <span>Analysis</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step-recommendations">
+                <div class="step-dot"></div>
+                <span>Recommendations</span>
+            </div>
+        </div>
+
+        <!-- Portfolio Section -->
+        <div id="portfolio-section" class="section card hidden">
+            <h2>Portfolio Holdings</h2>
+            <div id="portfolio-content"></div>
+        </div>
+
+        <!-- News Section -->
+        <div id="news-section" class="section card hidden">
+            <h2>News & Sentiment</h2>
+            <div id="news-content"></div>
+        </div>
+
+        <!-- Human Review Section -->
+        <div id="review-section" class="section card hidden">
+            <h2>Your Review</h2>
+            <p>Is the news above relevant to your analysis?</p>
+            <div class="review-buttons">
+                <button class="btn-yes" onclick="continueAnalysis(true)">
+                    Yes, include news in analysis
+                </button>
+                <button class="btn-no" onclick="continueAnalysis(false)">
+                    No, use only technical indicators
+                </button>
+            </div>
+        </div>
+
+        <!-- Analysis Section -->
+        <div id="analysis-section" class="section card hidden">
+            <h2>Technical Analysis</h2>
+            <div id="analysis-content"></div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div id="recommendations-section" class="section card hidden">
+            <h2>Recommendations</h2>
+            <div id="recommendations-content"></div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <span id="loading-text">Fetching portfolio...</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

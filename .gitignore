@@ -1,0 +1,36 @@
+# ── Environment & Secrets ──
+.env
+*.json
+!package.json
+!tsconfig.json
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Virtual Environment ──
+.venv/
+venv/
+ENV/
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Logs ──
+*.log
+
+# ── OS ──
+Desktop.ini
+ehthumbs.db

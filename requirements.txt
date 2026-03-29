@@ -1,0 +1,29 @@
+# ── Web Framework ──
+fastapi>=0.115.0
+uvicorn>=0.30.0
+
+# ── LangChain Core ──
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-google-genai>=2.0.0
+
+# ── LangGraph (Agent Orchestration) ──
+langgraph>=0.2.0
+langgraph-checkpoint>=2.0.0
+langgraph-prebuilt>=0.1.0
+
+# ── MCP (Model Context Protocol) ──
+mcp>=1.0.0
+langchain-mcp-adapters>=0.1.0
+
+# ── External APIs ──
+newsapi-python>=0.2.7
+
+# ── Data & Config ──
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+httpx>=0.27.0
+
+# ── Google Cloud ──
+google-genai>=1.0.0
+google-cloud-aiplatform>=1.50.0
